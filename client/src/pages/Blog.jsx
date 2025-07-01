@@ -17,14 +17,12 @@ const Blog = () => {
   const { axios } = useAppContext();
   const [comments, setComments] = useState([]) // State variable to hold the blog comments
   const [name, setName] = useState('') // State variable to hold the Name of the commenter
-  const [email, setEmail] = useState('') // State variable to hold the Email of the commenter
   const [content, setContent] = useState('') // State variable to hold the Comment of the commenter
 
   const fetchBlogData = async () => {
     try {
       const { data } = await axios.get(`/api/blog/${id}`);
       data.success ? setData(data.blog) : toast.error(data.message);
-      console.log(data.blog)
     } catch (error) {
     }
   }
@@ -36,14 +34,13 @@ const Blog = () => {
       toast.error(error.message);
     }
   }
-  const addCommnet = async (e) => {
+  const addComment  = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('/api/blog/comments', { blog: id, name, content });
+      const { data } = await axios.post('/api/blog/add-comment', { blog: id, name, content });
       if (data.success) {
         toast.success(data.message)
-        setName('')
-        setEmail('')
+        setName('');
         setContent('');
       }
       else{
@@ -57,7 +54,9 @@ const Blog = () => {
     fetchBlogData()
     fetchCommentsData()
   }, [])
-
+  console.log(comments)
+  console.log(name)
+  console.log(content)
   return data ? (
     <div className='relative'>
       <img
@@ -105,10 +104,9 @@ const Blog = () => {
         {/* add comments form */}
         <div className="max-w-3xl mx-auto mb-16">
           <h2 className='font-semibold mb-4'>Leave a Comment</h2>
-          <form onSubmit={addCommnet}>
+          <form onSubmit={addComment}>
             <div className='flex gap-4'>
               <input onChange={(e) => setName(e.target.value)} value={name} type="text" placeholder='Name' className='border-2 border-gray-300 h-12 ps-4 rounded-md w-full' />
-              <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" placeholder='Email' className='border-2 border-gray-300 h-12 ps-4 rounded-md w-full' />
             </div>
             <textarea onChange={(e) => setContent(e.target.value)} value={content} placeholder='Comment' className='border-2 border-gray-300 rounded-md ps-4 pt-3 w-full mt-4' rows='4' />
             <button type='submit' className='py-2 px-4 mt-4 cursor-pointer rounded-md text-white bg-primary'>Submit</button>
